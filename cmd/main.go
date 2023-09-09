@@ -14,8 +14,8 @@ var help *bool
 func main() {
 	app := &cli.App{
 		Commands: []*cli.Command{
-			commands.New(),
-			commands.Run(),
+			commands.NewCommand(commands.New),
+			commands.NewCommand(commands.Run),
 		},
 		Flags: []cli.Flag{
 			flags.NewFlag(flags.Help, flags.WithDestination(help)),

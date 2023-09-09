@@ -14,7 +14,7 @@ var module *string
 var language *string
 var directory *string
 
-func New() *cli.Command {
+func cmdNew() *cli.Command {
 	return &cli.Command{
 		Name:  constants.NewName,
 		Usage: constants.NewUsage,
@@ -42,5 +42,5 @@ func create() error {
 		err = os.Chdir(*directory)
 	}
 
-	return nil
+	return err
 }

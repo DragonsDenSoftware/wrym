@@ -9,7 +9,6 @@ func dev() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    constants.DevName,
 		Aliases: []string{constants.DevAlias},
-		Value:   "",
 		Usage:   constants.DevUsage,
 	}
 }

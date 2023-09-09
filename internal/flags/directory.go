@@ -9,10 +9,7 @@ import (
 )
 
 func directory() *cli.StringFlag {
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
+	ex, _ := os.Executable()
 	curDir := filepath.Dir(ex)
 	return &cli.StringFlag{
 		Name:    constants.DirectoryName,

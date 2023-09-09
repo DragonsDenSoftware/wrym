@@ -9,7 +9,6 @@ func language() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    constants.LanguageName,
 		Aliases: []string{constants.LanguageAlias},
-		Value:   "",
 		Usage:   constants.LanguageUsage,
 	}
 }

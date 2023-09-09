@@ -9,7 +9,6 @@ func staging() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    constants.StagingName,
 		Aliases: []string{constants.StagingAlias},
-		Value:   "",
 		Usage:   constants.StagingUsage,
 	}
 }

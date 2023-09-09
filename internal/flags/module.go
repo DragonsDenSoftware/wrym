@@ -9,7 +9,6 @@ func module() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    constants.ModuleName,
 		Aliases: []string{constants.ModuleAlias},
-		Value:   "",
 		Usage:   constants.ModuleUsage,
 	}
 }

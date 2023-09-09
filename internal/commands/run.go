@@ -8,7 +8,7 @@ import (
 
 var runHelp *bool
 
-func Run() *cli.Command {
+func cmdRun() *cli.Command {
 	return &cli.Command{
 		Name:  constants.RunName,
 		Usage: constants.RunUsage,

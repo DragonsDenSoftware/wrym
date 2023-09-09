@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-type Flags int64
+type Flags int8
 
 const (
 	Help Flags = iota
@@ -34,7 +34,6 @@ func WithDestination[D *string | *bool](destination D) func(cli.Flag) {
 }
 
 func Required() func(cli.Flag) {
-
 	return func(flag cli.Flag) {
 		f := flag.(*cli.StringFlag)
 
