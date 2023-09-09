@@ -1,8 +1,12 @@
 package commands
 
 import (
+	"errors"
+	"github.com/syke99/wyvrn-cli/internal/constants"
 	"github.com/syke99/wyvrn-cli/internal/flags"
 	"github.com/urfave/cli/v2"
+	"os"
+	"strings"
 )
 
 var module *string
@@ -26,5 +30,15 @@ func New() *cli.Command {
 
 func create() error {
 	// TODO: fill body with creating new apps/modules
+	var err error
+
+	if _, ok := constants.Languages[strings.ToLower(*language)]; !ok {
+		err = errors.New("language entered not in list of supported languages")
+	}
+
+	if err == nil {
+		err = os.Chdir(*directory)
+	}
+
 	return nil
 }
