@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/syke99/wyvrn-cli/internal/flags"
+	"github.com/syke99/wyvrn-cli/internal/templates"
 	"log"
 	"os"
 
@@ -21,7 +22,11 @@ func main() {
 			flags.NewFlag(flags.Help, flags.WithDestination(help)),
 		},
 		Action: func(context *cli.Context) error {
-			// TODO: check for help flag and print help data if present
+			if *help {
+				err := templates.Help(templates.TopLevel)
+				return err
+			}
+
 			return nil
 		},
 	}

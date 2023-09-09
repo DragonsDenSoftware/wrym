@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/syke99/wyvrn-cli/internal/constants"
 	"github.com/syke99/wyvrn-cli/internal/flags"
+	"github.com/syke99/wyvrn-cli/internal/templates"
 	"github.com/urfave/cli/v2"
 	"os"
 	"strings"
@@ -33,6 +34,11 @@ func cmdNew() *cli.Command {
 func create() error {
 	// TODO: fill body with creating new apps/modules
 	var err error
+
+	if *newHelp {
+		err = templates.Help(templates.New)
+		return err
+	}
 
 	if _, ok := constants.Languages[strings.ToLower(*language)]; !ok {
 		err = errors.New("language entered not in list of supported languages")
