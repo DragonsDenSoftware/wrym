@@ -9,15 +9,17 @@ import (
 	"strings"
 )
 
+var newHelp *bool
 var module *string
 var language *string
 var directory *string
 
 func New() *cli.Command {
 	return &cli.Command{
-		Name:  "new",
-		Usage: "generate a new wyvrn app/module",
+		Name:  constants.NewName,
+		Usage: constants.NewUsage,
 		Flags: []cli.Flag{
+			flags.NewFlag(flags.Help, flags.WithDestination(newHelp)),
 			flags.NewFlag(flags.Module, flags.WithDestination(module)),
 			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required()),
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),

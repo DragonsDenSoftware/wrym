@@ -1,12 +1,15 @@
 package flags
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/syke99/wyvrn-cli/internal/constants"
+	"github.com/urfave/cli/v2"
+)
 
 func dev() *cli.StringFlag {
 	return &cli.StringFlag{
-		Name:    "dev",
-		Aliases: []string{"d"},
+		Name:    constants.DevName,
+		Aliases: []string{constants.DevAlias},
 		Value:   "",
-		Usage:   "specify to run wyvrn with the dev configuration",
+		Usage:   constants.DevUsage,
 	}
 }

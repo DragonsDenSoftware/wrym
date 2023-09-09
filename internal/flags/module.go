@@ -1,12 +1,15 @@
 package flags
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/syke99/wyvrn-cli/internal/constants"
+	"github.com/urfave/cli/v2"
+)
 
 func module() *cli.StringFlag {
 	return &cli.StringFlag{
-		Name:    "module",
-		Aliases: []string{"m"},
+		Name:    constants.ModuleName,
+		Aliases: []string{constants.ModuleAlias},
 		Value:   "",
-		Usage:   "signal cli to create a template for a WASM module; value will be used to name the module",
+		Usage:   constants.ModuleUsage,
 	}
 }

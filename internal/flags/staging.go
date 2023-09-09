@@ -1,12 +1,15 @@
 package flags
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/syke99/wyvrn-cli/internal/constants"
+	"github.com/urfave/cli/v2"
+)
 
 func staging() *cli.StringFlag {
 	return &cli.StringFlag{
-		Name:    "staging",
-		Aliases: []string{"s"},
+		Name:    constants.StagingName,
+		Aliases: []string{constants.StagingAlias},
 		Value:   "",
-		Usage:   "specify to run wyvrn with the staging configuration",
+		Usage:   constants.StagingUsage,
 	}
 }

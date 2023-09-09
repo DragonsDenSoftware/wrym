@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"github.com/syke99/wyvrn-cli/internal/constants"
 	"os"
 	"path/filepath"
 
@@ -14,9 +15,9 @@ func directory() *cli.StringFlag {
 	}
 	curDir := filepath.Dir(ex)
 	return &cli.StringFlag{
-		Name:    "dir",
-		Aliases: []string{"d"},
+		Name:    constants.DirectoryName,
+		Aliases: []string{constants.DirectoryAlias},
 		Value:   curDir,
-		Usage:   "specify the directory to create your new wyvrn app/module; defaults to the current directory",
+		Usage:   constants.DirectoryUsage,
 	}
 }
