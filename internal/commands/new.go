@@ -20,7 +20,6 @@ func cmdNew() *cli.Command {
 		Name:  constants.NewName,
 		Usage: constants.NewUsage,
 		Flags: []cli.Flag{
-			flags.NewFlag(flags.Help, flags.WithDestination(newHelp)),
 			flags.NewFlag(flags.Module, flags.WithDestination(module)),
 			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required()),
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),

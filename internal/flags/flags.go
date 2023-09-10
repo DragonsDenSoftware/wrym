@@ -7,8 +7,7 @@ import (
 type Flags int8
 
 const (
-	Help Flags = iota
-	Module
+	Module Flags = iota
 	Language
 	Directory
 	Dev
@@ -18,34 +17,21 @@ const (
 
 type FlagOptions func(flag cli.Flag)
 
-func WithDestination[D *string | *bool](destination D) func(cli.Flag) {
-	return func(flag cli.Flag) {
-		switch any(destination).(type) {
-		case *string:
-			f := flag.(*cli.StringFlag)
-
-			f.Destination = any(destination).(*string)
-		case *bool:
-			f := flag.(*cli.BoolFlag)
-
-			f.Destination = any(destination).(*bool)
-		}
+func WithDestination(destination *string) func(*cli.StringFlag) {
+	return func(flag *cli.StringFlag) {
+		flag.Destination = destination
 	}
 }
 
-func Required() func(cli.Flag) {
-	return func(flag cli.Flag) {
-		f := flag.(*cli.StringFlag)
-
-		f.Required = true
+func Required() func(*cli.StringFlag) {
+	return func(flag *cli.StringFlag) {
+		flag.Required = true
 	}
 }
 
 func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
 	var f cli.Flag
 	switch flag {
-	case Help:
-		f = help()
 	case Module:
 		f = module()
 	case Language:

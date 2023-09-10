@@ -14,7 +14,6 @@ func cmdRun() *cli.Command {
 		Name:  constants.RunName,
 		Usage: constants.RunUsage,
 		Flags: []cli.Flag{
-			flags.NewFlag(flags.Help, flags.WithDestination(runHelp)),
 			flags.NewFlag(flags.Dev),
 			flags.NewFlag(flags.Staging),
 			flags.NewFlag(flags.Prod),
