@@ -3,7 +3,6 @@ package commands
 import (
 	"github.com/syke99/wyvrn-cli/internal/constants"
 	"github.com/syke99/wyvrn-cli/internal/flags"
-	"github.com/syke99/wyvrn-cli/internal/templates"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,12 +25,5 @@ func cmdRun() *cli.Command {
 
 func runWyvrn() error {
 	// TODO: body
-	var err error
-
-	if *runHelp {
-		err = templates.Help(templates.New)
-		return err
-	}
-
 	return nil
 }

@@ -1,6 +1,8 @@
 package commands
 
-import "github.com/urfave/cli/v2"
+import (
+	"github.com/urfave/cli/v2"
+)
 
 type Commands int8
 
@@ -9,11 +11,11 @@ const (
 	Run
 )
 
-func NewCommand(cmd Commands) *cli.Command {
+func NewCommand(ctx *cli.Context, cmd Commands) *cli.Command {
 	var c *cli.Command
 	switch cmd {
 	case New:
-		c = cmdNew()
+		c = cmdNew(ctx)
 	case Run:
 		c = cmdRun()
 	}
