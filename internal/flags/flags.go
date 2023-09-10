@@ -12,6 +12,7 @@ const (
 	Language
 	Directory
 	Step
+	Name
 	Dev
 	Staging
 	Prod
@@ -25,14 +26,33 @@ func WithDestination(destination *string) func(*cli.StringFlag) {
 	}
 }
 
-func Required(ctx *cli.Context) func(*cli.StringFlag) {
+func Required(ctx *cli.Context, reqFor ...string) func(*cli.StringFlag) {
 	return func(flag *cli.StringFlag) {
-		if ctx == nil ||
-			ctx.Value(constants.ModuleName).(string) != "" {
+		if (len(reqFor) == 1 && reqFor[0] == "all") ||
+			isRequired(ctx, reqFor) {
 			flag.Required = true
 			return
 		}
 	}
+}
+
+func isRequired(ctx *cli.Context, reqFor []string) bool {
+	var required bool
+
+	for _, flg := range reqFor {
+		switch flg {
+		case constants.ModuleName:
+			if ctx.String(flg) != "" {
+				required = true
+			}
+		case constants.NewName:
+			if ctx.String(constants.ModuleName) == "" {
+				required = true
+			}
+		}
+	}
+
+	return required
 }
 
 func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
@@ -46,6 +66,8 @@ func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
 		f = directory()
 	case Step:
 		f = step()
+	case Name:
+		f = name()
 	case Dev:
 		f = dev()
 	case Staging:
