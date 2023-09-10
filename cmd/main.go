@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"github.com/syke99/wyvrn-cli/internal/commands"
 	"log"
 	"os"
@@ -12,21 +11,16 @@ import (
 var help *bool
 
 func main() {
-	ctx := context.Background()
-
 	app := &cli.App{}
 
-	cCtx := cli.NewContext(app, nil, &cli.Context{
-		Context: ctx,
-		App:     app,
-	})
+	cCtx := cli.NewContext(app, nil, nil)
 
 	app.Commands = []*cli.Command{
 		commands.NewCommand(cCtx, commands.New),
 		commands.NewCommand(cCtx, commands.Run),
 	}
 
-	err := app.RunContext(ctx, os.Args)
+	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
