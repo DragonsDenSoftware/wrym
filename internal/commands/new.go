@@ -18,7 +18,7 @@ var language *string
 var directory *string
 var step *string
 var name *string
-var withCfg *bool
+var cfg *bool
 var newEnv *string
 
 func cmdNew(homeDir string) *cli.Command {
@@ -31,7 +31,7 @@ func cmdNew(homeDir string) *cli.Command {
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),
 			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName)),
 			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(constants.NewName)),
-			flags.NewFlag(flags.Config, flags.WithDestination(withCfg)),
+			flags.NewFlag(flags.Config, flags.WithDestination(cfg)),
 			flags.NewFlag(flags.Env, flags.WithDestination(newEnv), flags.Required(constants.ConfigName)),
 		},
 		Action: func(c *cli.Context) error {
@@ -53,30 +53,7 @@ func create(homeDir string) error {
 	if err == nil {
 		// if specific directory was specified
 		if directory != nil {
-			var dir os.FileInfo
-
-			cleanDir := filepath.Clean(*directory)
-
-			// check for existence of specified
-			// directory
-			dir, err = os.Stat(cleanDir)
-
-			if err == nil {
-				if dir == nil {
-					// if the specified directory
-					// doesn't exist, create it
-					err = os.Mkdir(cleanDir, os.ModeDir)
-				}
-
-				// change to the specified directory
-				if err == nil {
-					err = os.Chdir(cleanDir)
-				}
-			}
-
-			if err == nil {
-				homeDir = cleanDir
-			}
+			homeDir, err = changeToDir(homeDir)
 		} else if name != nil {
 			err = os.Mkdir(*name, os.ModeDir)
 
@@ -92,6 +69,8 @@ func create(homeDir string) error {
 
 	if module != nil {
 		err = templateModule(homeDir, lang)
+	} else if cfg != nil {
+
 	} else {
 		// create directory structure, then template initial module
 		err = os.Mkdir("modules", os.ModeDir)
@@ -118,6 +97,26 @@ func create(homeDir string) error {
 	}
 
 	return err
+}
+
+func changeToDir(homeDir string) (string, error) {
+	var err error
+
+	cleanDir := filepath.Clean(*directory)
+
+	// check for existence of specified
+	// directory
+	_, err = os.Stat(cleanDir)
+
+	if err == nil {
+		err = os.Chdir(cleanDir)
+	}
+
+	if err == nil {
+		homeDir = cleanDir
+	}
+
+	return homeDir, err
 }
 
 func templateModule(dir string, lang string) error {

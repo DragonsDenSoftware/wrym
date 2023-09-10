@@ -1,8 +1,8 @@
 package flags
 
 import (
-	"fmt"
 	"github.com/syke99/wyvrn-cli/internal/constants"
+	"github.com/syke99/wyvrn-cli/internal/errs"
 	"github.com/urfave/cli/v2"
 )
 
@@ -44,18 +44,18 @@ func Required(reqFor ...string) func(cli.Flag) {
 				if flg, ok := isRequired(ctx, reqFor); ok &&
 					s == "" {
 					if flg == "all" {
-						return fmt.Errorf("%s flag is required", s)
+						return errs.FlagRequired(s)
 					}
 
 					if flg == constants.NewName {
-						return fmt.Errorf("%s flag required when using %s command", s, constants.NewName)
+						return errs.FlagRequiredForCommand(s, constants.NewName)
 					}
 
 					if flg == constants.RunName {
-						return fmt.Errorf("%s flag required when using %s command", s, constants.RunName)
+						return errs.FlagRequiredForCommand(s, constants.RunName)
 					}
 
-					return fmt.Errorf("%s flag required when using %s flag", s, flg)
+					return errs.FlagRequiredForOtherFlag(s, flg)
 				}
 				return nil
 			}
