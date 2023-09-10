@@ -3,6 +3,7 @@ package templates
 import (
 	"github.com/iancoleman/strcase"
 	"io"
+	"strings"
 	"text/template"
 )
 
@@ -21,16 +22,18 @@ const (
 )
 
 type stepCases struct {
-	Snake  string
-	Pascal string
-	Camel  string
+	Snake     string
+	Pascal    string
+	Camel     string
+	LowerCase string
 }
 
 func Template(w io.Writer, lang Language, step *string) error {
 	s := stepCases{
-		Snake:  strcase.ToSnake(*step),
-		Pascal: strcase.ToCamel(*step),
-		Camel:  strcase.ToLowerCamel(*step),
+		Snake:     strcase.ToSnake(*step),
+		Pascal:    strcase.ToCamel(*step),
+		Camel:     strcase.ToLowerCamel(*step),
+		LowerCase: strings.ToLower(*step),
 	}
 
 	var tmpl *template.Template
