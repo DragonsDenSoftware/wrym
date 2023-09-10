@@ -17,7 +17,7 @@ func NewCommand(ctx *cli.Context, cmd Commands) *cli.Command {
 	case New:
 		c = cmdNew(ctx)
 	case Run:
-		c = cmdRun()
+		c = cmdRun(ctx)
 	}
 	return c
 }

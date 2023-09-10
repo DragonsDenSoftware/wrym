@@ -18,6 +18,8 @@ var language *string
 var directory *string
 var step *string
 var name *string
+var withCfg *bool
+var env *string
 
 func cmdNew(ctx *cli.Context) *cli.Command {
 	return &cli.Command{
@@ -25,10 +27,12 @@ func cmdNew(ctx *cli.Context) *cli.Command {
 		Usage: constants.NewUsage,
 		Flags: []cli.Flag{
 			flags.NewFlag(flags.Module, flags.WithDestination(module)),
-			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required(nil, "all")),
+			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required()),
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),
-			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(ctx, constants.ModuleName)),
-			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(ctx, constants.NewName)),
+			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName)),
+			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(constants.NewName)),
+			flags.NewFlag(flags.Config, flags.WithDestination(withCfg)),
+			flags.NewFlag(flags.Env, flags.WithDestination(env), flags.Required(constants.ConfigName), flags.Validate()),
 		},
 		Action: func(c *cli.Context) error {
 			return create()
@@ -37,6 +41,7 @@ func cmdNew(ctx *cli.Context) *cli.Command {
 }
 
 func create() error {
+	// TODO: rework to consider option of creating a new env
 	ex, _ := os.Executable()
 	curDir := filepath.Dir(ex)
 
@@ -149,14 +154,12 @@ func templateModule(dir string, lang string) error {
 
 	//	mod = strcase.ToSnake(mod)
 	//	ext = "go"
-	case "assemblyscript":
-	case "assembly-script":
+	case "assemblyscript", "assembly-script":
 		tmplLang = templates.AssemblyScript
 
 		mod = strings.ToLower(mod)
 		ext = "ts"
-	//case "csharp":
-	//case "c-sharp":
+	//case "csharp", "c-sharp":
 	//	tmplLang = templates.CSharp
 
 	case "zig":
@@ -164,8 +167,7 @@ func templateModule(dir string, lang string) error {
 
 		mod = strings.ToLower(mod)
 		ext = "zig"
-	case "javascript":
-	case "js":
+	case "javascript", "js":
 		tmplLang = templates.JavaScript
 
 		mod = strings.ToLower(fmt.Sprintf("%s.%s", mod, ext))
