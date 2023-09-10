@@ -19,9 +19,9 @@ var directory *string
 var step *string
 var name *string
 var withCfg *bool
-var env *string
+var newEnv *string
 
-func cmdNew(ctx *cli.Context) *cli.Command {
+func cmdNew(homeDir string) *cli.Command {
 	return &cli.Command{
 		Name:  constants.NewName,
 		Usage: constants.NewUsage,
@@ -32,19 +32,16 @@ func cmdNew(ctx *cli.Context) *cli.Command {
 			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName)),
 			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(constants.NewName)),
 			flags.NewFlag(flags.Config, flags.WithDestination(withCfg)),
-			flags.NewFlag(flags.Env, flags.WithDestination(env), flags.Required(constants.ConfigName), flags.Validate()),
+			flags.NewFlag(flags.Env, flags.WithDestination(newEnv), flags.Required(constants.ConfigName)),
 		},
 		Action: func(c *cli.Context) error {
-			return create()
+			return create(homeDir)
 		},
 	}
 }
 
-func create() error {
+func create(homeDir string) error {
 	// TODO: rework to consider option of creating a new env
-	ex, _ := os.Executable()
-	curDir := filepath.Dir(ex)
-
 	var err error
 
 	lang := strings.ToLower(*language)
@@ -78,7 +75,7 @@ func create() error {
 			}
 
 			if err == nil {
-				curDir = cleanDir
+				homeDir = cleanDir
 			}
 		} else if name != nil {
 			err = os.Mkdir(*name, os.ModeDir)
@@ -88,13 +85,13 @@ func create() error {
 			}
 
 			if err == nil {
-				curDir = filepath.Join(curDir, *name)
+				homeDir = filepath.Join(homeDir, *name)
 			}
 		}
 	}
 
 	if module != nil {
-		err = templateModule(curDir, lang)
+		err = templateModule(homeDir, lang)
 	} else {
 		// create directory structure, then template initial module
 		err = os.Mkdir("modules", os.ModeDir)
@@ -104,19 +101,19 @@ func create() error {
 		}
 
 		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.DevName), os.ModeDir)
+			err = os.Mkdir(filepath.Join("env", constants.DevEnv), os.ModeDir)
 		}
 
 		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.StagingName), os.ModeDir)
+			err = os.Mkdir(filepath.Join("env", constants.StageEnv), os.ModeDir)
 		}
 
 		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.ProdName), os.ModeDir)
+			err = os.Mkdir(filepath.Join("env", constants.ProdEnv), os.ModeDir)
 		}
 
 		if err == nil {
-			err = templateModule(filepath.Join(curDir, "modules"), lang)
+			err = templateModule(filepath.Join(homeDir, "modules"), lang)
 		}
 	}
 

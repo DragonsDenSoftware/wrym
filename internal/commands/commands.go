@@ -11,13 +11,13 @@ const (
 	Run
 )
 
-func NewCommand(ctx *cli.Context, cmd Commands) *cli.Command {
+func NewCommand(cmd Commands, homeDir string) *cli.Command {
 	var c *cli.Command
 	switch cmd {
 	case New:
-		c = cmdNew(ctx)
+		c = cmdNew(homeDir)
 	case Run:
-		c = cmdRun(ctx)
+		c = cmdRun(homeDir)
 	}
 	return c
 }

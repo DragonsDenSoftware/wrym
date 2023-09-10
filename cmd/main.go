@@ -4,20 +4,20 @@ import (
 	"github.com/syke99/wyvrn-cli/internal/commands"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/urfave/cli/v2"
 )
 
-var help *bool
-
 func main() {
+	ex, _ := os.Executable()
+	curDir := filepath.Dir(ex)
+
 	app := &cli.App{}
 
-	cCtx := cli.NewContext(app, nil, nil)
-
 	app.Commands = []*cli.Command{
-		commands.NewCommand(cCtx, commands.New),
-		commands.NewCommand(cCtx, commands.Run),
+		commands.NewCommand(commands.New, curDir),
+		commands.NewCommand(commands.Run, curDir),
 	}
 
 	err := app.Run(os.Args)

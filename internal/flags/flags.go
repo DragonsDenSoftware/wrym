@@ -16,9 +16,6 @@ const (
 	Name
 	Config
 	Env
-	Dev
-	Staging
-	Prod
 )
 
 type FlagOptions func(flag cli.Flag)
@@ -50,6 +47,14 @@ func Required(reqFor ...string) func(cli.Flag) {
 						return fmt.Errorf("%s flag is required", s)
 					}
 
+					if flg == constants.NewName {
+						return fmt.Errorf("%s flag required when using %s command", s, constants.NewName)
+					}
+
+					if flg == constants.RunName {
+						return fmt.Errorf("%s flag required when using %s command", s, constants.RunName)
+					}
+
 					return fmt.Errorf("%s flag required when using %s flag", s, flg)
 				}
 				return nil
@@ -70,8 +75,14 @@ func isRequired(ctx *cli.Context, reqFor []string) (string, bool) {
 				required = true
 			}
 		case constants.NewName:
-			if ctx.String(constants.ModuleName) == "" {
+			if ctx.String(constants.ModuleName) == "" &&
+				ctx.Command.Name == constants.NewName {
 				flag = constants.NewName
+				required = true
+			}
+		case constants.RunName:
+			if ctx.Command.Name == constants.RunName {
+				flag = constants.RunName
 				required = true
 			}
 		case constants.ConfigName:
@@ -83,32 +94,6 @@ func isRequired(ctx *cli.Context, reqFor []string) (string, bool) {
 	}
 
 	return flag, required
-}
-
-func Validate() func(cli.Flag) {
-	return func(flag cli.Flag) {
-		switch flag.Names() {
-		case []string{constants.EnvName, constants.EnvAlias}:
-			flg := flag.(*cli.StringFlag)
-
-			req := flg.Action
-
-			flg.Action = func(ctx *cli.Context, s string) error {
-				err := req(ctx, s)
-
-				if err == nil {
-					if s != constants.DevName ||
-						s != constants.StagingAlias ||
-						s != constants.ProdName {
-						err = fmt.Errorf("invalid environment specified; must be %s, %s, or %s",
-							constants.DevName, constants.StagingName, constants.ProdName)
-					}
-				}
-
-				return err
-			}
-		}
-	}
 }
 
 func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
@@ -128,12 +113,6 @@ func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
 		f = config()
 	case Env:
 		f = env()
-	case Dev:
-		f = dev()
-	case Staging:
-		f = staging()
-	case Prod:
-		f = prod()
 	}
 
 	for _, opt := range opts {
