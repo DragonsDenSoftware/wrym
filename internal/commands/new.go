@@ -30,7 +30,7 @@ func cmdNew(homeDir string) *cli.Command {
 			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required()),
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),
 			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName)),
-			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(constants.NewName)),
+			flags.NewFlag(flags.AppName, flags.WithDestination(name), flags.Required(constants.NewName)),
 			flags.NewFlag(flags.Config, flags.WithDestination(cfg)),
 			flags.NewFlag(flags.Env, flags.WithDestination(newEnv), flags.Required(constants.ConfigName)),
 		},

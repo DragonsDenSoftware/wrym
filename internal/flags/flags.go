@@ -13,7 +13,7 @@ const (
 	Language
 	Directory
 	Step
-	Name
+	AppName
 	Config
 	Env
 )
@@ -107,7 +107,7 @@ func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
 		f = directory()
 	case Step:
 		f = step()
-	case Name:
+	case AppName:
 		f = name()
 	case Config:
 		f = config()
