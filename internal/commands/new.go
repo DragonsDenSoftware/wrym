@@ -70,7 +70,19 @@ func create(homeDir string) error {
 	if module != nil {
 		err = templateModule(homeDir, lang)
 	} else if cfg != nil {
+		_, err = os.Stat(filepath.Join(homeDir, "env"))
 
+		var envFile *os.File
+		if err == nil {
+			if _, err = os.Stat(filepath.Join(homeDir, "env", *newEnv)); err != nil {
+				envFile, err = os.Create(filepath.Join(homeDir, "env", *newEnv))
+				defer envFile.Close()
+			}
+		}
+
+		if err == nil {
+			_, err = envFile.WriteString(templates.Config)
+		}
 	} else {
 		// create directory structure, then template initial module
 		err = os.Mkdir("modules", os.ModeDir)
