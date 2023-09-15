@@ -56,6 +56,9 @@ steps:
       hello: again
       goodbye: final
   step3:
+    # if you want to run multiple steps concurrently,
+    # just specify the step is concurrent and list
+    # all steps to be run together under it
     concurrent:
       step4:
         module: moduleOneName
