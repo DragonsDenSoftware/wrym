@@ -1,1 +1,1 @@
-# wyvrn-cli
+# wrym

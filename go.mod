@@ -1,4 +1,4 @@
-module github.com/syke99/wyvrn-cli
+module github.com/syke99/wrym
 
 go 1.20
 
