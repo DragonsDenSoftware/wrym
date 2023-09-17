@@ -1,7 +1,8 @@
 package flags
 
 import (
-	"github.com/syke99/wrym/internal/pkg/errs"
+	"github.com/DragonsDenSoftware/wrym/internal/pkg/constants"
+	"github.com/DragonsDenSoftware/wrym/internal/pkg/errs"
 	"github.com/urfave/cli/v2"
 )
 

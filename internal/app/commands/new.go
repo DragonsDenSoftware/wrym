@@ -3,10 +3,10 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"github.com/DragonsDenSoftware/wrym/internal/app/flags"
+	"github.com/DragonsDenSoftware/wrym/internal/pkg/constants"
+	"github.com/DragonsDenSoftware/wrym/internal/pkg/templates"
 	"github.com/iancoleman/strcase"
-	"github.com/syke99/wrym/internal/app/flags"
-	"github.com/syke99/wrym/internal/pkg/constants"
-	"github.com/syke99/wrym/internal/pkg/templates"
 	"github.com/urfave/cli/v2"
 	"os"
 	"path/filepath"

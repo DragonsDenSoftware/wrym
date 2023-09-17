@@ -1,4 +1,4 @@
-module github.com/syke99/wrym
+module github.com/DragonsDenSoftware/wrym
 
 go 1.20
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/syke99/wrym/internal/app/commands"
+	"github.com/DragonsDenSoftware/wrym/internal/app/commands"
 	"log"
 	"os"
 	"path/filepath"
