@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"github.com/syke99/wyvrn-cli/internal/constants"
-	"github.com/syke99/wyvrn-cli/internal/flags"
-	"github.com/syke99/wyvrn-cli/internal/templates"
+	"github.com/syke99/wyvrn-cli/internal/app/flags"
+	constants "github.com/syke99/wyvrn-cli/internal/pkg/constants"
+	"github.com/syke99/wyvrn-cli/internal/pkg/templates"
 	"github.com/urfave/cli/v2"
 	"os"
 	"path/filepath"
@@ -20,17 +20,19 @@ var step *string
 var name *string
 var cfg *bool
 var newEnv *string
+var app *bool
 
 func cmdNew(homeDir string) *cli.Command {
 	return &cli.Command{
 		Name:  constants.NewName,
 		Usage: constants.NewUsage,
 		Flags: []cli.Flag{
+			flags.NewFlag(flags.App, flags.WithDestination(app)),
 			flags.NewFlag(flags.Module, flags.WithDestination(module)),
 			flags.NewFlag(flags.Language, flags.WithDestination(language), flags.Required()),
 			flags.NewFlag(flags.Directory, flags.WithDestination(directory)),
-			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName)),
-			flags.NewFlag(flags.AppName, flags.WithDestination(name), flags.Required(constants.NewName)),
+			flags.NewFlag(flags.Step, flags.WithDestination(step), flags.Required(constants.ModuleName, constants.AppName)),
+			flags.NewFlag(flags.Name, flags.WithDestination(name), flags.Required(constants.AppName)),
 			flags.NewFlag(flags.Config, flags.WithDestination(cfg)),
 			flags.NewFlag(flags.Env, flags.WithDestination(newEnv), flags.Required(constants.ConfigName)),
 		},
@@ -41,7 +43,6 @@ func cmdNew(homeDir string) *cli.Command {
 }
 
 func create(homeDir string) error {
-	// TODO: rework to consider option of creating a new env
 	var err error
 
 	lang := strings.ToLower(*language)
@@ -54,7 +55,7 @@ func create(homeDir string) error {
 		// if specific directory was specified
 		if directory != nil {
 			homeDir, err = changeToDir(homeDir)
-		} else if name != nil {
+		} else if app != nil {
 			err = os.Mkdir(*name, os.ModeDir)
 
 			if err == nil {

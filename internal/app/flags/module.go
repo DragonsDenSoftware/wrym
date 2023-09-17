@@ -1,7 +1,7 @@
 package flags
 
 import (
-	"github.com/syke99/wyvrn-cli/internal/constants"
+	"github.com/syke99/wyvrn-cli/internal/pkg/constants"
 	"github.com/urfave/cli/v2"
 )
 

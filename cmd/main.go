@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/syke99/wyvrn-cli/internal/commands"
+	"github.com/syke99/wyvrn-cli/internal/app/commands"
 	"log"
 	"os"
 	"path/filepath"

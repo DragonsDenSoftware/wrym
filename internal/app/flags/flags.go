@@ -1,8 +1,8 @@
 package flags
 
 import (
-	"github.com/syke99/wyvrn-cli/internal/constants"
-	"github.com/syke99/wyvrn-cli/internal/errs"
+	constants2 "github.com/syke99/wyvrn-cli/internal/pkg/constants"
+	"github.com/syke99/wyvrn-cli/internal/pkg/errs"
 	"github.com/urfave/cli/v2"
 )
 
@@ -13,9 +13,10 @@ const (
 	Language
 	Directory
 	Step
-	AppName
+	Name
 	Config
 	Env
+	App
 )
 
 type FlagOptions func(flag cli.Flag)
@@ -47,12 +48,12 @@ func Required(reqFor ...string) func(cli.Flag) {
 						return errs.FlagRequired(s)
 					}
 
-					if flg == constants.NewName {
-						return errs.FlagRequiredForCommand(s, constants.NewName)
+					if flg == constants2.NewName {
+						return errs.FlagRequiredForCommand(s, constants2.NewName)
 					}
 
-					if flg == constants.RunName {
-						return errs.FlagRequiredForCommand(s, constants.RunName)
+					if flg == constants2.RunName {
+						return errs.FlagRequiredForCommand(s, constants2.RunName)
 					}
 
 					return errs.FlagRequiredForOtherFlag(s, flg)
@@ -69,25 +70,25 @@ func isRequired(ctx *cli.Context, reqFor []string) (string, bool) {
 
 	for _, flg := range reqFor {
 		switch flg {
-		case constants.ModuleName:
+		case constants2.ModuleName:
 			if ctx.String(flg) != "" {
-				flag = constants.ModuleName
+				flag = constants2.ModuleName
 				required = true
 			}
-		case constants.NewName:
-			if ctx.String(constants.ModuleName) == "" &&
-				ctx.Command.Name == constants.NewName {
-				flag = constants.NewName
+		case constants2.NewName:
+			if ctx.String(constants2.ModuleName) == "" &&
+				ctx.Command.Name == constants2.NewName {
+				flag = constants2.NewName
 				required = true
 			}
-		case constants.RunName:
-			if ctx.Command.Name == constants.RunName {
-				flag = constants.RunName
+		case constants2.RunName:
+			if ctx.Command.Name == constants2.RunName {
+				flag = constants2.RunName
 				required = true
 			}
-		case constants.ConfigName:
-			if ctx.Bool(constants.ConfigName) {
-				flag = constants.ConfigName
+		case constants2.ConfigName:
+			if ctx.Bool(constants2.ConfigName) {
+				flag = constants2.ConfigName
 				required = true
 			}
 		}
@@ -107,12 +108,14 @@ func NewFlag(flag Flags, opts ...FlagOptions) cli.Flag {
 		f = directory()
 	case Step:
 		f = step()
-	case AppName:
+	case Name:
 		f = name()
 	case Config:
 		f = config()
 	case Env:
 		f = env()
+	case App:
+		f = app()
 	}
 
 	for _, opt := range opts {

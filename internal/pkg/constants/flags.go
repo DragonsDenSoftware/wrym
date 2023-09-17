@@ -25,3 +25,6 @@ if using with new command, specifies which environment you want to create a new 
 const DevEnv = "dev"
 const StageEnv = "Staging"
 const ProdEnv = "prod"
+const AppName = "app"
+const AppAlias = "a"
+const AppUsage = "used to create a new wyvrn app"
