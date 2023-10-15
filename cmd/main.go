@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/DragonsDenSoftware/wrym/internal/app/commands"
+	"github.com/syke99/trier"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,8 +21,11 @@ func main() {
 		commands.NewCommand(commands.Run, curDir),
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
+	try := trier.NewTrier()
+
+	if try.Try(func(args ...any) error {
+		return app.Run(os.Args)
+	}).Err() != nil {
+		log.Fatal(try.Err())
 	}
 }
