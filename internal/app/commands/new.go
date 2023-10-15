@@ -7,6 +7,7 @@ import (
 	"github.com/DragonsDenSoftware/wrym/internal/pkg/constants"
 	"github.com/DragonsDenSoftware/wrym/internal/pkg/templates"
 	"github.com/iancoleman/strcase"
+	"github.com/syke99/trier"
 	"github.com/urfave/cli/v2"
 	"os"
 	"path/filepath"
@@ -47,96 +48,103 @@ func create(homeDir string) error {
 
 	lang := strings.ToLower(*language)
 
-	if _, ok := constants.Languages[lang]; !ok {
-		err = errors.New("language entered not in list of supported languages")
-	}
+	tr := trier.NewTrier()
 
-	if err == nil {
+	tr.Try(func(args ...any) error {
+		if _, ok := constants.Languages[lang]; !ok {
+			err = errors.New("language entered not in list of supported languages")
+		}
+		return err
+	}).Try(func(args ...any) error {
+		try := trier.NewTrier()
+
 		// if specific directory was specified
 		if directory != nil {
-			homeDir, err = changeToDir(homeDir)
+			try.Try(func(args ...any) error {
+				homeDir, err = changeToDir(homeDir)
+				return err
+			})
 		} else if app != nil {
-			err = os.Mkdir(*name, os.ModeDir)
-
-			if err == nil {
-				err = os.Chdir(*name)
-			}
-
-			if err == nil {
+			try.Try(func(args ...any) error {
+				return os.Mkdir(*name, os.ModeDir)
+			}).Try(func(args ...any) error {
+				return os.Chdir(*name)
+			}).Try(func(args ...any) error {
 				homeDir = filepath.Join(homeDir, *name)
-			}
-		}
-	}
-
-	if module != nil {
-		err = templateModule(homeDir, lang)
-	} else if cfg != nil {
-		_, err = os.Stat(filepath.Join(homeDir, "env"))
-
-		var envFile *os.File
-		if err == nil {
-			if _, err = os.Stat(filepath.Join(homeDir, "env", *newEnv)); err != nil {
-				envFile, err = os.Create(filepath.Join(homeDir, "env", *newEnv))
-				defer envFile.Close()
-			}
+				return nil
+			})
 		}
 
-		if err == nil {
-			_, err = envFile.WriteString(templates.Config)
-		}
-	} else {
-		// create directory structure, then template initial module
-		err = os.Mkdir("modules", os.ModeDir)
+		return try.Err()
+	}).Try(func(args ...any) error {
+		try := trier.NewTrier()
 
-		if err == nil {
-			err = os.Mkdir("env", os.ModeDir)
+		if module != nil {
+			try.Try(func(args ...any) error {
+				return templateModule(homeDir, lang)
+			})
+		} else if cfg != nil {
+			var envFile *os.File
+			var e error
+			try.Try(func(args ...any) error {
+				_, e = os.Stat(filepath.Join(homeDir, "env"))
+				return e
+			}).TryJoin(func(args ...any) error {
+				_, e = os.Stat(filepath.Join(homeDir, "env", *newEnv))
+				return e
+			}).Try(func(args ...any) error {
+				envFile, e = os.Create(filepath.Join(homeDir, "env", *newEnv))
+				return e
+			}).Try(func(args ...any) error {
+				_, e = envFile.WriteString(templates.Config)
+				_ = envFile.Close()
+				return e
+			})
+		} else {
+			try.Try(func(args ...any) error {
+				return os.Mkdir("modules", os.ModeDir)
+			}).Try(func(args ...any) error {
+				return os.Mkdir("env", os.ModeDir)
+			}).Try(func(args ...any) error {
+				return os.Mkdir(filepath.Join("env", constants.DevEnv), os.ModeDir)
+			}).Try(func(args ...any) error {
+				return os.Mkdir(filepath.Join("env", constants.StageEnv), os.ModeDir)
+			}).Try(func(args ...any) error {
+				return os.Mkdir(filepath.Join("env", constants.ProdEnv), os.ModeDir)
+			}).Try(func(args ...any) error {
+				return templateModule(filepath.Join(homeDir, "modules"), lang)
+			})
 		}
 
-		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.DevEnv), os.ModeDir)
-		}
-
-		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.StageEnv), os.ModeDir)
-		}
-
-		if err == nil {
-			err = os.Mkdir(filepath.Join("env", constants.ProdEnv), os.ModeDir)
-		}
-
-		if err == nil {
-			err = templateModule(filepath.Join(homeDir, "modules"), lang)
-		}
-	}
+		return try.Err()
+	})
 
 	return err
 }
 
 func changeToDir(homeDir string) (string, error) {
-	var err error
+	try := trier.NewTrier()
 
 	cleanDir := filepath.Clean(*directory)
 
-	// check for existence of specified
-	// directory
-	_, err = os.Stat(cleanDir)
-
-	if err == nil {
-		err = os.Chdir(cleanDir)
-	}
-
-	if err == nil {
+	try.Try(func(args ...any) error {
+		_, err := os.Stat(cleanDir)
+		return err
+	}).Try(func(args ...any) error {
+		return os.Chdir(cleanDir)
+	}).Try(func(args ...any) error {
 		homeDir = cleanDir
-	}
+		return nil
+	})
 
-	return homeDir, err
+	return homeDir, try.Err()
 }
 
 func templateModule(dir string, lang string) error {
+	try := trier.NewTrier()
+
 	var tmplLang templates.Language
 	var f *os.File
-
-	var err error
 
 	mod := *module
 
@@ -186,11 +194,13 @@ func templateModule(dir string, lang string) error {
 
 	}
 
-	f, err = os.Create(filepath.Join(dir, mod, ext))
+	try.Try(func(args ...any) error {
+		var e error
+		f, e = os.Create(filepath.Join(dir, mod, ext))
+		return e
+	}).Try(func(args ...any) error {
+		return templates.Template(f, tmplLang, step)
+	})
 
-	if err != nil {
-		return err
-	}
-
-	return templates.Template(f, tmplLang, step)
+	return try.Err()
 }
